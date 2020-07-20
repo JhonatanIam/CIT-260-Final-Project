@@ -1,22 +1,23 @@
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Period;
 import java.time.Year;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Runner {
 
+	private static final Temporal Temporal = null;
 	static private List<Person> ppl = new ArrayList<>();
 	static private Person user;
 	static private int choice;
-
+	
 	public static void main(String[] args) {
 		Scanner reader = new Scanner(System.in);
-
-//		System.out.println(java.time.LocalDate.now());
-
+		
 		File file = new File("Accounts.txt");
 		reader = null;
 		try {
@@ -24,20 +25,20 @@ public class Runner {
 		}
 		catch (IOException e) {
 		}
-
-		while(reader.hasNextLine()) {
-			Scanner line = new Scanner(reader.nextLine());
-			ppl.add(new Person(line.next(), line.next(), line.next() + " " + line.next(), line.next(),
-					(Account401k) findAccount(line), (AccountProfitSharing) findAccount(line)));
-//			ppl.get(ppl.size() - 1).showAllInfo();
+		if(reader != null) {
+			while(reader.hasNextLine()) {
+				Scanner line = new Scanner(reader.nextLine());
+				ppl.add(new Person(line.next(), line.next(), line.next() + " " + line.next(), line.next(),
+						(Account401k) findAccount(line), (AccountProfitSharing) findAccount(line)));
+			}
 		}
-
+		
 		Boolean running = true;
 		while(running) {
 			System.out.println("Welcome to CIT260! How may we help you today?");
-
+			
 			choice = options(new Scanner(System.in), "   [1] Log in\n   [2] Sign Up\n   [3] Leave", 3);
-
+			
 			if(choice == 1) {
 				user = logIn(new Scanner(System.in));
 				interaction();
@@ -49,11 +50,12 @@ public class Runner {
 				running = false;
 			}
 		}
-
 		System.out.println("\n\nThank you for visiting and choosing CIT260!\n\n\n");
 		saveData();
 	}
-
+	
+	
+	
 	private static int options(Scanner input, String opt, int max) {
 		int num = 0;
 		boolean boo = true;
@@ -77,7 +79,7 @@ public class Runner {
 		System.out.println();
 		return num;
 	}
-
+	
 	private static void newUser() {
 		System.out.println("\nWhat type of account would you like to open?");
 		int a = options(new Scanner(System.in), "   [1] 401k\n   [2] Profit Sharing\n   [3] Back", 3);
@@ -88,7 +90,7 @@ public class Runner {
 			createAccount(new Scanner(System.in), "Profit Sharing Account", false);
 		}
 	}
-
+	
 	private static Person logIn(Scanner input) {
 		String username;
 		String pass;
@@ -128,73 +130,94 @@ public class Runner {
 		}
 		return per;
 	}
-
+	
 	private static void interaction() {
+		if(user == null) {
+			System.out.println("\n\n");
+			return;
+		}
+		System.out.println("\n\n\nHello! Welcome " + user.getName() + "!");
 		while(true) {
-			if(user == null) {
-				System.out.println("\n\n");
-				break;
-			}
-			System.out.println("\n\n\nHello! Welcome " + user.getName() + "! What would you like to do?");
+			System.out.println("What would you like to do?");
 			System.out.println();
-			if(user.get401k() == null) {
+			if(user.get401k() == null && user.getPS() != null) {
 				int o = options(new Scanner(System.in), "   [1] Sign up for a 401k account\n   [2] Display balance\n   [3] Close profit sharing account\n   [4] Log Out", 4);
 				if(o == 1) {
 					createAccount(new Scanner(System.in), "401k Account", true);
 				}
 				else if(o == 2) {
-//					displayBalance(new Scanner(System.in));
+					user.profile();
 				}
 				else if(o == 3) {
-//					closingAccount(new Scanner(System.in), "Profit Sharing Account");
+					closingAccount(new Scanner(System.in), "Profit Sharing Account");
 				}
 				else {
 					System.out.println("\n\n");
+					saveData();
 					break;
 				}
 			}
-			else if(user.getPS() == null) {
+			else if(user.get401k() != null && user.getPS() == null) {
 				int o = options(new Scanner(System.in), "   [1] Sign up for a profit sharing account\n   [2] Deposit money into 401k account\n   [3] Display balance\n   [4] Close 401k account\n   [5] Log Out", 5);
 				if(o == 1) {
 					createAccount(new Scanner(System.in), "Profit Sharing Account", true);
 				}
 				else if(o == 2) {
-//					deposit401k(new Scanner(System.in));
+					user.get401k().deposit(getDeposit(new Scanner(System.in)));
+					System.out.println("Deposit complete! New balance: " + user.get401k().getBalance());
 				}
 				else if(o == 3) {
-//					displayBalance(new Scanner(System.in));
+					user.profile();
 				}
 				else if(o == 4) {
 					closingAccount(new Scanner(System.in), "401k Account");
-
+					
 				}
 				else {
 					System.out.println("\n\n");
+					saveData();
+					break;
+				}
+			}
+			else if(user.get401k() == null && user.get401k() == null) {
+				int o = options(new Scanner(System.in), "   [1] Sign up for a 401k account\n   [2] Sign up for a profit sharing account\n   [3] Log Out", 3);
+				if(o == 1) {
+					createAccount(new Scanner(System.in), "401k Account", true);
+				}
+				else if(o == 2) {
+					createAccount(new Scanner(System.in), "Profit Sharing Account", true);
+				}
+				else {
+					System.out.println("\n\n");
+					saveData();
 					break;
 				}
 			}
 			else {
 				int o = options(new Scanner(System.in), "   [1] Deposit money into 401k account\n   [2] Display balance\n   [3] Close 401k account\n   [4] Close profit sharing account\n   [5] Log Out", 5);
 				if(o == 1) {
-//					deposit401k(new Scanner(System.in));
+					user.get401k().deposit(getDeposit(new Scanner(System.in)));
+					System.out.println("Deposit complete! New balance: " + user.get401k().getBalance());
 				}
 				else if(o == 2) {
-//					displayBalance(new Scanner(System.in));
+					user.profile();
 				}
 				else if(o == 3) {
-//					closingAccount(new Scanner(System.in), "401k Account");
+					closingAccount(new Scanner(System.in), "401k Account");
 				}
 				else if(o == 4) {
-//					closingAccount(new Scanner(System.in), "Profit Sharing Account");
+					closingAccount(new Scanner(System.in), "Profit Sharing Account");
 				}
 				else {
 					System.out.println("\n\n");
+					saveData();
 					break;
 				}
 			}
+			System.out.println("\n\n\n");
 		}
 	}
-
+	
 	private static void createAccount(Scanner input, String account, boolean hasOtherAccount) {
 		System.out.println("We require the following information to open a " + account + ":");
 		if(!hasOtherAccount) {
@@ -212,7 +235,7 @@ public class Runner {
 				System.out.println();
 			}
 		}
-
+		
 		while(true) {
 			String name = "";
 			String username = "";
@@ -224,7 +247,27 @@ public class Runner {
 				pass = createPassword(new Scanner(System.in));
 				dob = getDate(input, "date of birth");
 			}
-			String hiringDate = getDate(new Scanner(System.in), "hiring date");
+			String hiringDate = "";
+			while(true) {
+				hiringDate = getDate(new Scanner(System.in), "hiring date");
+				if(hasOtherAccount) {
+					if(largerDate(user.getDOB(), hiringDate) > 0) {
+						break;
+					}
+					else {
+						System.out.println("Error: Hiring Date must be after your DOB\n");
+					}
+				}
+				else {
+					if(largerDate(dob, hiringDate) > 0) {
+						break;
+					}
+					else {
+						System.out.println("Error: Hiring Date must be after your DOB\n");
+					}
+				}
+				
+			}
 			if(checkExisting(new Person(username, pass, name, dob, null, null), account) < 0) {
 				if(hasOtherAccount) {
 					if(account.equals("Profit Sharing Account")) {
@@ -265,18 +308,26 @@ public class Runner {
 			}
 		}
 	}
-
+	
 	private static void closingAccount(Scanner input, String account) {
 		System.out.println("Closing " + account);
 		String yon = yesOrNo(input, "Are you still employed with your company?");
 		if(yon.equalsIgnoreCase("y")) {
-			System.out.println("Your funds are not eligible for withdrawal.\n\n\n");
+			System.out.println("Your funds are not eligible for withdrawal.");
 		}
 		else {
-			String terminatingDate = getDate(input, "termination date");
+			if(account.equals("401k Account")) {
+				double vested = user.get401k().getVested();
+				user.set401k(null);
+				System.out.println("Your " + account + " has been closed. A check of $" + vested + " will be disbursed to you.");
+			}
+			else {
+				double vested = user.getPS().getVested();
+				user.setPS(null);
+				System.out.println("Your " + account + " has been closed. A check of $" + vested + " will be disbursed to you.");
+			}
 		}
 	}
-
 	private static void saveData() {
 		PrintWriter printer = null;
 		try {
@@ -285,15 +336,14 @@ public class Runner {
 		catch (IOException e) {
 			System.out.println("Can't create file!");
 		}
-
-		System.out.println("Saving accounts...");
 		for (int i = 0; i < ppl.size(); i++) {
 			printer.println(ppl.get(i).saving());
 		}
 		printer.close();
-		System.out.println("Saved");
 	}
-
+	
+	
+	
 	private static Account findAccount(Scanner line) {
 		String n = line.next();
 		if(n.equals("null")) {
@@ -311,7 +361,7 @@ public class Runner {
 		}
 		return null;
 	}
-
+	
 	private static String getName(Scanner input) {
 		System.out.print("Enter your first name: ");
 		String first = input.next();
@@ -319,7 +369,7 @@ public class Runner {
 		String last = input.next();
 		return first + " " + last;
 	}
-
+	
 	private static String createUsername(Scanner input) {
 		String username = null;
 		while(true) {
@@ -334,7 +384,7 @@ public class Runner {
 		}
 		return username;
 	}
-
+	
 	private static String createPassword(Scanner input) {
 		String pass = null;
 		while(true) {
@@ -354,7 +404,7 @@ public class Runner {
 		}
 		return pass;
 	}
-
+	
 	private static int checkExisting(Person p, String account) {
 		for (int i = 0; i < ppl.size(); i++) {
 			Person test = ppl.get(i);
@@ -371,7 +421,7 @@ public class Runner {
 		}
 		return -1;
 	}
-
+	
 	private static String getDate(Scanner input, String event) {
 		String date = null;
 		boolean boo = false;
@@ -387,8 +437,8 @@ public class Runner {
 		}
 		return date;
 	}
-
-	private static String yesOrNo(Scanner input, String Q) {
+	
+ 	private static String yesOrNo(Scanner input, String Q) {
 		String yon = null;
 		boolean boo = false;
 		while(!boo) {
@@ -404,12 +454,12 @@ public class Runner {
 		}
 		return yon;
 	}
-
+	
 	private static double getDeposit(Scanner input) {
 		double deposit = 0;
 		boolean boo = false;
 		while(!boo) {
-			System.out.print("Enter deposit: ");
+			System.out.print("Enter deposit: $");
 			try {
 				deposit = input.nextDouble();
 				if(deposit >= 0) {
@@ -426,8 +476,25 @@ public class Runner {
 		}
 		return deposit;
 	}
-
-	private static Boolean validateDate(String date) {
+	
+	static int largerDate(String date1, String date2) {
+		String m1 = date1.substring(0, date1.indexOf("/"));
+		String d1 = date1.substring(date1.indexOf("/") + 1);
+		String y1 = d1.substring(d1.indexOf("/") + 1);
+		d1 = d1.substring(0, d1.indexOf("/"));
+		
+		String m2 = date2.substring(0, date2.indexOf("/"));
+		String d2 = date2.substring(date2.indexOf("/") + 1);
+		String y2 = d2.substring(d2.indexOf("/") + 1);
+		d2 = d2.substring(0, d2.indexOf("/"));
+		
+		Period timeDif = java.time.Period.between(java.time.LocalDate.of(Integer.parseInt(y1), Integer.parseInt(m1), Integer.parseInt(d1)), java.time.LocalDate.of(Integer.parseInt(y2), Integer.parseInt(m2), Integer.parseInt(d2)));
+		int m = timeDif.getMonths();
+		int y = timeDif.getYears() * 12;
+		return m + y;
+	}
+	
+	private static boolean validateDate(String date) {
 		if(date.indexOf("/") < 0) {
 			return false;
 		}
@@ -449,7 +516,7 @@ public class Runner {
 				if(Integer.parseInt(d) > 31 || Integer.parseInt(d) < 1) {
 					return false;
 				}
-
+				
 			case 2:
 				if(java.time.Year.isLeap(Integer.parseInt(y))) {
 					if(Integer.parseInt(d) > 29 || Integer.parseInt(d) < 1) {
@@ -461,52 +528,52 @@ public class Runner {
 						return false;
 					}
 				}
-
+				
 			case 3:
 				if(Integer.parseInt(d) > 31 || Integer.parseInt(d) < 1) {
 					return false;
 				}
-
+				
 			case 4:
 				if(Integer.parseInt(d) > 30 || Integer.parseInt(d) < 1) {
 					return false;
 				}
-
+				
 			case 5:
 				if(Integer.parseInt(d) > 31 || Integer.parseInt(d) < 1) {
 					return false;
 				}
-
+				
 			case 6:
 				if(Integer.parseInt(d) > 30 || Integer.parseInt(d) < 1) {
 					return false;
 				}
-
+				
 			case 7:
 				if(Integer.parseInt(d) > 31 || Integer.parseInt(d) < 1) {
 					return false;
 				}
-
+				
 			case 8:
 				if(Integer.parseInt(d) > 31 || Integer.parseInt(d) < 1) {
 					return false;
 				}
-
+				
 			case 9:
 				if(Integer.parseInt(d) > 30 || Integer.parseInt(d) < 1) {
 					return false;
 				}
-
+				
 			case 10:
 				if(Integer.parseInt(d) > 31 || Integer.parseInt(d) < 1) {
 					return false;
 				}
-
+				
 			case 11:
 				if(Integer.parseInt(d) > 30 || Integer.parseInt(d) < 1) {
 					return false;
 				}
-
+				
 			case 12:
 				if(Integer.parseInt(d) > 31 || Integer.parseInt(d) < 1) {
 					return false;
@@ -514,5 +581,5 @@ public class Runner {
 		}
 		return true;
 	}
-
+	
 }

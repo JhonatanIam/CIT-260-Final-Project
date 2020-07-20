@@ -23,21 +23,14 @@ public class Person {
 	protected void set401k(Account401k a401k) { this.a401k = a401k; }
 	protected void setPS(AccountProfitSharing aPS) { this.aPS = aPS; }
 	
-	protected void showAllInfo() {
-		System.out.println("Name: " + getName() + "\nUser: " + getUsername() + "\nPass: " + getPassword() + "\nDOB: " + getDOB());
+	protected void profile() {
+		System.out.println("Name: " + getName());
 		if(this.get401k() != null) {
-			get401k().showAllInfo();
-		}
-		else {
-			System.out.println("No 401k account");
+			this.get401k().display();;
 		}
 		if(this.getPS() != null) {
-			this.getPS().showAllInfo();
+			this.getPS().display();;
 		}
-		else {
-			System.out.println("No PS account");
-		}
-		System.out.println();
 	}
 	
 	protected String saving() {
