@@ -1,11 +1,20 @@
 import java.time.Year;
 
 public abstract class Account {
+	/**
+	* Account class for both 401k and profit sharing accounts. 
+	*/
 	
 	private String hireDate, type;
 	private double balance;
 	
 	public Account(String type, String hireDate, double balance) {
+		/**
+		* @param type  
+		* @param hireDate 
+		* @param balance  
+		*/
+		
 		this.type = type;
 		this.hireDate = hireDate;
 		this.balance = balance;
@@ -20,6 +29,10 @@ public abstract class Account {
 	protected abstract String saving();
 	
 	protected double getVested() {
+		/**
+		* calculates vested balance amount
+		* @return - getBalance() times vested percentage
+		*/
 		int dif = Runner.largerDate(getHireDate(), java.time.LocalDate.now().getMonthValue() + "/" + java.time.LocalDate.now().getDayOfMonth() + "/" + Year.now().getValue());
 		if(dif <= 11) {
 			return getBalance();
