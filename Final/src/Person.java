@@ -6,6 +6,15 @@ public class Person {
 	private AccountProfitSharing aPS;
 	
 	Person(String username, String password, String name, String DOB, Account401k a401k, AccountProfitSharing aPS) {
+		/**
+		* refers to current object variables
+		* @param username
+		* @param password
+		* @param DOB
+		* @param a401k
+		* @param aPS
+		*/
+		
 		this.username = username;
 		this.password = password;
 		this.name = name;
@@ -34,6 +43,10 @@ public class Person {
 	}
 	
 	protected String saving() {
+		/**
+		* saves input from user for login for 401k or Profit Sharing
+		* @return s
+		*/
 		String s = getUsername() + " " + getPassword() + " " + getName() + " " + getDOB();
 		if(this.get401k() != null) {
 			s += " " + get401k().saving();
