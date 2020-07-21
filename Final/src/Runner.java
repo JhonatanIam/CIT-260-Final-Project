@@ -8,7 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+* The CIT260 Bank Final program administrates a
+* Defined Contribution plan with two different account
+* account types - a 401k and a Profit Sharing Plan.
+* Users can log in, sign up, deposit, check their balance
+* and close their accounts.
+* <p>
+* It also calculates the match and vesting schedule, if 
+* applicable.
+* 
+*
+* @authors  Jhonathon Flores and Kim DeMille
+* @version 1.0
+* @since   2020-07-20 
+*/
+
 public class Runner {
+	
 
 	private static final Temporal Temporal = null;
 	static private List<Person> ppl = new ArrayList<>();
@@ -17,6 +34,17 @@ public class Runner {
 	
 	public static void main(String[] args) {
 		Scanner reader = new Scanner(System.in);
+		
+		/* *
+		* This is the main method where the methods are called
+ 		* from. The scanners are created here and the file will
+ 		* be created. The user will have options to choose from to
+ 		* create one of two accts, make deposits, get a balance or
+ 		* close the account.
+		* @param args unused
+		* @exception IOException on input error
+		* @return none
+		*/
 		
 		File file = new File("Accounts.txt");
 		reader = null;
@@ -57,6 +85,17 @@ public class Runner {
 	
 	
 	private static int options(Scanner input, String opt, int max) {
+		
+		/**
+		* This method asks user to select one of 7 options and then 
+		* validates their input
+		* @param input - This is the parameter to the person method
+		* @param opt - 
+		* @param max - 
+		* @see Exception
+		* @return num - This returns the option input of the user
+		*/
+		
 		int num = 0;
 		boolean boo = true;
 		while(boo) {
@@ -81,6 +120,12 @@ public class Runner {
 	}
 	
 	private static void newUser() {
+		/**
+		* This method asks the user what type of account they would like
+		* to open. 1) 401k 2) Profit Sharing 3) go back
+		* @return nothing
+		*/
+		
 		System.out.println("\nWhat type of account would you like to open?");
 		int a = options(new Scanner(System.in), "   [1] 401k\n   [2] Profit Sharing\n   [3] Back", 3);
 		if(a == 1) {
@@ -89,9 +134,19 @@ public class Runner {
 		else if(a == 2) {
 			createAccount(new Scanner(System.in), "Profit Sharing Account", false);
 		}
+	
 	}
 	
 	private static Person logIn(Scanner input) {
+		/**
+		* When user selects option to login to account, it directs
+		* to this method, where they enter their username and password.
+		* This method then runs the getUsername and getPassword methods
+		* to validate the entries. 
+		* @param input user inputs
+		* @return per - 
+		*/
+		
 		String username;
 		String pass;
 		Person per = null;
@@ -132,6 +187,15 @@ public class Runner {
 	}
 	
 	private static void interaction() {
+		/**
+		* This method assists interacts with the user once they are logged in
+		* to the main accounts. They are asked what they would like to do 1/ Sign
+		* up for a 401k acct 2/ Display a balance 3/ Close profit sharing acct, or
+		* 4/ log out.
+		* @param none
+		* @return none;
+		*/
+		
 		if(user == null) {
 			System.out.println("\n\n");
 			return;
@@ -219,6 +283,17 @@ public class Runner {
 	}
 	
 	private static void createAccount(Scanner input, String account, boolean hasOtherAccount) {
+		/**
+		* This method helps a user create an account. First it verifies what type of
+		* account the user wishes to create and if they already have that account created.
+		* It determines what information is needed for which type of account and creates
+		* the account and alerts if unable to create it.
+		* @param input
+		* @param account
+		* @param hasOtherAccount
+		* @return none
+		*/
+		
 		System.out.println("We require the following information to open a " + account + ":");
 		if(!hasOtherAccount) {
 			System.out.println(" - Your Name\n - Username\n - Password\n - Date of Birth\n - Hire Date\n");
@@ -310,6 +385,16 @@ public class Runner {
 	}
 	
 	private static void closingAccount(Scanner input, String account) {
+		/**
+		* This method assists the user in closing their account. It confirms that the
+		* user is no longer employed, calculates the vested funds based on termination
+		* date and closes the account. It displays for the user the amount to be 
+		* disbursed and confirms account closed.
+		* @param input
+		* @param account
+		* @return none
+		*/
+		
 		System.out.println("Closing " + account);
 		String yon = yesOrNo(input, "Are you still employed with your company?");
 		if(yon.equalsIgnoreCase("y")) {
@@ -329,6 +414,15 @@ public class Runner {
 		}
 	}
 	private static void saveData() {
+		/**
+		* This method writes the data to the file and saves it.
+		* If there are any problems, it alerts by displaying on 
+		* the screen.
+		* @param none
+		* @exception IOException - can't create file
+		* @return none
+		*/
+		
 		PrintWriter printer = null;
 		try {
 			printer = new PrintWriter(new File("Accounts.txt"));
@@ -345,6 +439,16 @@ public class Runner {
 	
 	
 	private static Account findAccount(Scanner line) {
+		/**
+		* During the program there are times when the program 
+		* needs to search for a users account. This method enables
+		* that search for either a 401k acct or a Profit Sharing
+		* account
+		* @param line
+		* @return Account401k
+		* @return AccountProfitSharing
+		*/
+		
 		String n = line.next();
 		if(n.equals("null")) {
 			return null;
@@ -363,6 +467,12 @@ public class Runner {
 	}
 	
 	private static String getName(Scanner input) {
+		/**
+		* This method returns a concatenated user name from the user
+		* input
+		* @param input - user first name and last name
+		* @return first + " " + last
+		*/
 		System.out.print("Enter your first name: ");
 		String first = input.next();
 		System.out.print("Enter your last name: ");
@@ -371,6 +481,12 @@ public class Runner {
 	}
 	
 	private static String createUsername(Scanner input) {
+		/**
+		* This method ensures the correct input of a username
+		* @param input
+		* @return username
+		*/
+		
 		String username = null;
 		while(true) {
 			System.out.print("Enter desired username: ");
@@ -386,6 +502,13 @@ public class Runner {
 	}
 	
 	private static String createPassword(Scanner input) {
+		/**
+		* This method assists the user with the creation of their
+		* password, and their confirmation password entry. 
+		* @param input - password entry and confirmation entry
+		* return pass 
+		*/
+		
 		String pass = null;
 		while(true) {
 			System.out.print("Enter password: ");
@@ -406,6 +529,12 @@ public class Runner {
 	}
 	
 	private static int checkExisting(Person p, String account) {
+		/**
+		* This method checks to see if user has existing accounts
+		* @param p
+		* @param account
+		* @return i
+		*/
 		for (int i = 0; i < ppl.size(); i++) {
 			Person test = ppl.get(i);
 			if(test.getUsername().equals(p.getUsername()) && test.getPassword().equals(p.getPassword())) {
@@ -423,6 +552,15 @@ public class Runner {
 	}
 	
 	private static String getDate(Scanner input, String event) {
+		/**
+		* This method gets the date from the user for an event such as 
+		* a termination date. It validates that the date is entered
+		* correctly.
+		* @param input - user enters the date
+		* @param event - event following prompt
+		* @return date
+		*//
+			
 		String date = null;
 		boolean boo = false;
 		while(!boo) {
@@ -439,6 +577,14 @@ public class Runner {
 	}
 	
  	private static String yesOrNo(Scanner input, String Q) {
+		/**
+		* This method confirms the correct input of the users entry for 
+		* a yes or no question and validates the entry
+		* @param input - user input
+		* @param Q 
+		* @return yon - answer from user input
+		*/
+		
 		String yon = null;
 		boolean boo = false;
 		while(!boo) {
@@ -456,6 +602,14 @@ public class Runner {
 	}
 	
 	private static double getDeposit(Scanner input) {
+		/**
+		* The user is asked to enter the dollar amount of the deposit they
+		* would like to make. The Method validates that the entry is accurate.
+		* @param input
+		* @exception IOException - input error exception
+		* @return deposit
+		*/
+		
 		double deposit = 0;
 		boolean boo = false;
 		while(!boo) {
@@ -478,6 +632,14 @@ public class Runner {
 	}
 	
 	static int largerDate(String date1, String date2) {
+		/**
+		* This method determines the larger date of two individual dates.
+		* Then it calculates the difference between the two dates in months and years.
+		* @param date1
+		* @param date2
+		* @return m + y - returns the difference between two dates in months and years
+		*/
+		
 		String m1 = date1.substring(0, date1.indexOf("/"));
 		String d1 = date1.substring(date1.indexOf("/") + 1);
 		String y1 = d1.substring(d1.indexOf("/") + 1);
@@ -495,6 +657,12 @@ public class Runner {
 	}
 	
 	private static boolean validateDate(String date) {
+		/**
+		* This method validates the date is correct
+		* @param date
+		* @return boolean
+		*/
+		
 		if(date.indexOf("/") < 0) {
 			return false;
 		}
