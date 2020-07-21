@@ -35,7 +35,7 @@ public class Runner {
 		
 		Boolean running = true;
 		while(running) {
-			System.out.println("Welcome to CIT260! How may we help you today?");
+			System.out.println("Welcome to CIT260 Bank! How may we help you today?");
 			
 			choice = options(new Scanner(System.in), "   [1] Log in\n   [2] Sign Up\n   [3] Leave", 3);
 			
@@ -50,7 +50,7 @@ public class Runner {
 				running = false;
 			}
 		}
-		System.out.println("\n\nThank you for visiting and choosing CIT260!\n\n\n");
+		System.out.println("\n\nThank you for visiting and choosing CIT260 Bank!\n\n\n");
 		saveData();
 	}
 	
@@ -251,19 +251,19 @@ public class Runner {
 			while(true) {
 				hiringDate = getDate(new Scanner(System.in), "hiring date");
 				if(hasOtherAccount) {
-					if(largerDate(user.getDOB(), hiringDate) > 0) {
+					if(largerDate(user.getDOB(), hiringDate) > 180) {
 						break;
 					}
 					else {
-						System.out.println("Error: Hiring Date must be after your DOB\n");
+						System.out.println("Error: You must be at least 16 years old to work\n");
 					}
 				}
 				else {
-					if(largerDate(dob, hiringDate) > 0) {
+					if(largerDate(dob, hiringDate) > 180) {
 						break;
 					}
 					else {
-						System.out.println("Error: Hiring Date must be after your DOB\n");
+						System.out.println("Error: You must be at least 16 years old to work\n");
 					}
 				}
 				
@@ -506,10 +506,15 @@ public class Runner {
 		if(d.indexOf("/") < 0) {
 			return false;
 		}
+
 		String y = d.substring(d.indexOf("/") + 1);
 		d = d.substring(0, d.indexOf("/"));
-		if(Integer.parseInt(y) > Year.now().getValue() || Integer.parseInt(y) < 1) {
-			return false;
+		if(Integer.parseInt(d) > java.time.LocalDate.now().getDayOfMonth()) {
+			if(Integer.parseInt(m) >= java.time.LocalDate.now().getMonthValue()) {
+				if(Integer.parseInt(y) >= Year.now().getValue() || Integer.parseInt(y) < 1) {
+					return false;
+				}
+			}
 		}
 		switch(Integer.parseInt(m)) {
 			case 1:
